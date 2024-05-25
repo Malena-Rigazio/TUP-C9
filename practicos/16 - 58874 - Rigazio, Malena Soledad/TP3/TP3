@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="website icon" type="png" href="icono.jpeg">
+    <title>Control de Depósito</title>
+    <style>
+    * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+}
+
+#root {
+    margin: 20px;
+}
+
+.panel {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.panel label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.panel input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.panel .acciones {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.panel .acciones button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: #fff;
+    margin-right: 10px;
+}
+
+.error {
+    color: red;
+    margin-top: 5px;
+}
+
+.lista-productos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.producto {
+    width: calc(33.33% - 20px);
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.producto p {
+    margin-bottom: 10px;
+}
+
+.producto .acciones {
+    text-align: center;
+}
+
+.producto .acciones button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: #fff;
+    margin-left: 5px;
+}
+
+.producto .acciones button:last-child {
+    margin-left: 0;
+}
+
+    </style>
+</head>
+<body>
+    <header>Control de Depósito</header>
+   <div id="root"></div> 
+   <script type="text/babel">
+
+    const { useState } = React
+
+const ProductosIniciales = [
+    {id: 1, nombre: 'Pepsi', codigo: '123456789', cantidad: '1'},
+    {id: 2, nombre: 'Fanta', codigo: '024681012', cantidad: '2'},
+    {id: 3, nombre: 'Secco', codigo: '135791113', cantidad: '3'},
+]
+
+function Editar({bebida, alGuardar, alCancelar}){
+    let [nombre, setNombre] = useState(bebida.nombre)
+    let [codigo, setCodigo] = useState(bebida.codigo)
+    let [cantidad, setCantidad] = useState(bebida.cantidad)
+    let [error, setError] = useState(false)
+
+    const cambiarNombre = e => {
+        setNombre(e.target.value)
+        setError(false)
+    } 
+    const cambiarCodigo = e => {
+        setCodigo(e.target.value)
+        setError(false)
+    }
+    const cambiarCantidad = e => {
+        setCantidad(e.target.value)
+        setError(false)
+    }
+
+    const guardar = e => {
+        e.preventDefault()
+        if(nombre.trin() === ''|| codigo.trin() === ''|| cantidad.trin() === ''){
+            setError(true)
+            return
+        }
+        alGuardar({...bebida, nombre,codigo,cantidad})
+    }
+    const cancelar = e => {
+        e.preventDefault()
+        alCancelar()
+    }
+
+    return <>
+    <form class="panel">
+
+        <label>Nombre</label>
+        <input type="text" value={nombre} onChange = {cambiarNombre}/>
+
+        <label>Codigo</label>
+        <input type="text" value={codigo} onChange = {cambiarCodigo}/>
+
+        <label>Cantidad</label>
+        <input type="text" value={cantidad} onChange = {cambiarCantidad}/>
+        {error && <p class="error">ERROR. Todos los campos son obligatorios</p>}
+        <div class="acciones">
+        <button onClick={guardar}>Guardar</button>
+        <button onClick={cancelar}>Cancelar</button>
+        </div>
+        
+        </form>
+    </>
+}
+
+function Mostrar({bebida, alEditar})
+{
+    const editar = (e) => alEditar()
+    const borrar = (e) => alBorrar()
+
+    return <>
+    <div class = "panel">
+        <p><strong>Nombre</strong>{bebida.nombre}</p>
+        <p><strong>Código</strong>{bebida.codigo}</p>
+        <p><strong>Cantidad</strong>{bebida.cantidad}</p>
+        <div class="acciones">
+            <button onClick={editar}>Editar</button>
+            <button onClick={borrar}>Borrar</button>
+
+        </div>
+    </div>
+        </>
+}
+
+function Lista({bebida, alAgregar, alEditar, alBorrar}){
+    if(bebidas.lenght === 0)
+    return <h1>No hay bebidas registradas</h1>
+}
+{
+    return <>
+    <h1>Lista de Productos</h1>
+    <button onClick={() => alAgregar()}>Agregar</button>
+
+    {bebidas.map(bebida => 
+        <Mostrar bebida = {bebida}
+         alEditar = {() => alEditar (bebida.id)}
+         alBorrar = {() => alBorrar (bebida.id)}/>
+    )}
+    </>
+}
+
+function ordenAlfab(a, b){
+    if(a.codigo < b.codigo) return -1
+    if(a.codigo > b.codigo) return +1
+
+    if(a.nombre < b.nombre) return -1
+    if(a.nombre > b.nmobre) return +1
+    return 0
+
+}
+
+function App(){
+    let [bebida, setBebida] = useState({})
+    let [editando, setEditanto] = useState(false)
+    let [bebidas, setBebidas] = useState(ProductosIniciales)
+
+    const agregarBebida = (bebida) => {
+        let copia = [...bebidas, bebida]
+        setBebidas(copia)
+        setEditanto(false)
+        console.log("Agregar", bebida)
+    }
+
+    const guardar = (bebida) => {
+        if(bebida.id){
+            //Modificaciones
+            let copia = bebidas.map(c => c.id === bebida.id ? bebida : c)
+            setBebidas(copia)
+        } else{
+            //Alta
+            let id = Math.max(...bebidas.map(c => c.id)) + 1
+            bebida.id = id
+            let copia = [...bebidas, {...bebida, id}]
+            setBebidas(copia)
+        }
+        let copia = bebidas.map(c => c.id === bebida.id ? bebida : c)
+        setBebidas(copia)
+        setEditanto(false)
+        console.log("Mostrar", bebida)
+    }
+
+    const cancelar = () => {
+        setBebida({})
+        setEditanto(false)
+        console.log("Cancelar")
+    }
+
+    const agregar = () => {
+        setBebida({})
+        setEditanto(true)
+    }
+
+    const editar = (id) => {
+        let bebida = ProductosIniciales.find(c => c.id === id)
+        setBebida(bebida)
+        setEditanto(true)
+    }
+
+    const borrar = (id) => {
+        //Baja
+        let copia = bebida.filter(c => c.id !== id)
+        setBebidas(copia)
+    }
+    bebidas.sort(ordenAlfab)
+
+    return <>
+    { editando
+        ? <Editar bebida={bebida} alGuardar={guardar} alCancelar={cancelar}/>
+        : <Lista bebidas={bebidas} 
+        alAgregar = {agregar}
+        alEditar = {editar} 
+        alBorrar ={borrar}/>
+    }
+    </>
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'))
+root.render(<App />);
+   </script>
+</body>
+</html>
